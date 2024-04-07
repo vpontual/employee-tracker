@@ -1,7 +1,7 @@
+const server = require("./server");
+const query = require("./queries");
 // Including needed packages for this application
 const inquirer = require("inquirer");
-
-const server = require("./server");
 
 // Array of questions for user input
 const questions = [
@@ -24,21 +24,6 @@ const questions = [
       "View the total utilized budget of a department",
       "Quit",
     ],
-  },
-  {
-    type: "input",
-    name: "viewalldepartments",
-    when: (answers) => answers.welcome === "View all departments",
-  },
-  {
-    type: "input",
-    name: "viewallroles",
-    when: (answers) => answers.welcome === "View all roles",
-  },
-  {
-    type: "input",
-    name: "viewallemployees",
-    when: (answers) => answers.welcome === "View all employees",
   },
   {
     type: "input",
@@ -67,16 +52,6 @@ const questions = [
   },
   {
     type: "input",
-    name: "viewemployeesbymanager",
-    when: (answers) => answers.welcome === "View employees by manager",
-  },
-  {
-    type: "input",
-    name: "viewemployeesbydepartment",
-    when: (answers) => answers.welcome === "View employees by department",
-  },
-  {
-    type: "input",
     name: "deletedepartmentsrolesandemployees",
     when: (answers) =>
       answers.welcome === "Delete departments, roles, and employees",
@@ -99,13 +74,13 @@ async function promptMenu() {
   const answer = await inquirer.prompt(questions);
   switch (answer.welcome) {
     case "View all departments":
-      await server.getAllDepartments();
+      await query.getAllDepartments();
       break;
     case "View all roles":
-      await server.getAllRoles();
+      await query.getAllRoles();
       break;
     case "View all employees":
-      await server.getAllEmployees();
+      await query.getAllEmployees();
       break;
     case "Quit":
       process.exit(0);
