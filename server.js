@@ -2,6 +2,8 @@
 const express = require("express");
 const { Pool } = require("pg");
 
+const userChoice = await getUserChoice();
+
 // App/Port
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,19 +20,20 @@ const pool = new Pool(
     host: "localhost",
     database: "employees_db",
   },
-  console.log(`Connected to the employees_db database.`),
+  console.log(`Connected to the employees_db database.`)
 );
 
 pool.connect();
 
 //GET request to the /api/departments route renders a list of all departments.
-
-app.get("/api/department", (req, res) => {
-  pool.query("SELECT * FROM department", function (err, { rows }) {
-    console.log(rows);
-    res.json(rows);
+if (userChoice === "View all departments") {
+  app.get("/api/department", (req, res) => {
+    pool.query("SELECT * FROM department", function (err, { rows }) {
+      console.log(rows);
+      res.json(rows);
+    });
   });
-});
+}
 
 //GET request to the /api/roles route renders a list of all roles.
 
@@ -52,6 +55,7 @@ app.get("/api/employee", (req, res) => {
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
+  console.log("Request not found");
   res.status(404).end();
 });
 

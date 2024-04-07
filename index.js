@@ -92,3 +92,8 @@ const questions = [
     when: (answers) => answers.welcome === "Quit",
   },
 ];
+
+async function getUserChoice() {
+  const answers = await inquirer.prompt(questions);
+  return answers.welcome;
+}
