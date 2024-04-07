@@ -3,12 +3,12 @@ const express = require("express");
 const { Pool } = require("pg");
 
 // App/Port
-const app = express();
-const PORT = process.env.PORT || 3001;
+//const app = express();
+//const PORT = process.env.PORT || 3001;
 
 // Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+//app.use(express.urlencoded({ extended: false }));
+//app.use(express.json());
 
 // Connect to database
 const pool = new Pool(
@@ -21,7 +21,7 @@ const pool = new Pool(
   console.log(`Connected to the employees_db database.`)
 );
 
-pool.connect();
+module.exports = pool; // pool.connect();
 
 // const getAllDepartments = async () => {
 //   const { rows } = await pool.query("SELECT id, name FROM department");
@@ -68,6 +68,6 @@ pool.connect();
 // };
 
 // Initialization
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+//app.listen(PORT, () => {
+//  console.log(`Server running on port ${PORT}`);
+//});

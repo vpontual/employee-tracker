@@ -1,5 +1,4 @@
-const server = require("./server");
-const query = require("./queries");
+const queries = require("./queries");
 // Including needed packages for this application
 const inquirer = require("inquirer");
 
@@ -29,16 +28,19 @@ const questions = [
     type: "input",
     name: "adddepartment",
     when: (answers) => answers.welcome === "Add a department",
+    choices: ["Add a department"],
   },
   {
     type: "input",
     name: "addrole",
     when: (answers) => answers.welcome === "Add a role",
+    choices: ["Add a role"],
   },
   {
     type: "input",
     name: "addemployee",
     when: (answers) => answers.welcome === "Add an employee",
+    choices: ["Add an employee"],
   },
   {
     type: "input",
@@ -74,13 +76,13 @@ async function promptMenu() {
   const answer = await inquirer.prompt(questions);
   switch (answer.welcome) {
     case "View all departments":
-      await query.getAllDepartments();
+      await queries.getAllDepartments();
       break;
     case "View all roles":
-      await query.getAllRoles();
+      await queries.getAllRoles();
       break;
     case "View all employees":
-      await query.getAllEmployees();
+      await queries.getAllEmployees();
       break;
     case "Quit":
       process.exit(0);
