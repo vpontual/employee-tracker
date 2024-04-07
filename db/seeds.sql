@@ -10,9 +10,9 @@ VALUES ('Head of Sales', 100000, 1),
        ('Lead Engineer', 150000, 3),
        ('Software Engineer', 120000, 4),
        ('Account Manager', 160000 , 5),
-       ('Accountant', , 6),
-       ('Legal Team Lead', , 7),
-       ('Lawyer', , 8);
+       ('Accountant', 125000, 6),
+       ('Legal Team Lead', 250000, 7),
+       ('Lawyer', 190000, 8);
 
 INSERT INTO employee (first_name, last_name, department_id, employee_id)
 VALUES ('John', 'Doe', 1),
