@@ -28,7 +28,7 @@ const questions = [
     type: "input",
     name: "adddepartment",
     when: (answers) => answers.welcome === "Add a department",
-    choices: ["Add a department"],
+    message: "What is the name of the department?",
   },
   {
     type: "input",
@@ -83,6 +83,9 @@ async function promptMenu() {
       break;
     case "View all employees":
       await queries.getAllEmployees();
+      break;
+    case "Add a department":
+      await queries.addDepartment(answer.adddepartment);
       break;
     case "Quit":
       process.exit(0);

@@ -4,7 +4,7 @@ class queries {
   constructor(pool) {
     this.pool = pool;
   }
-
+  // Get all employees
   async getAllEmployees() {
     const client = await this.pool.connect();
     const result = await client.query(`
@@ -34,16 +34,29 @@ class queries {
   }
 
   // Get all roles
-  // getAllRoles() {
-  //   console.log(pool.query("SELECT * FROM role"));
-  // }
-  // Get all employees
+  async getAllRoles() {
+    const client = await this.pool.connect();
+    const result = await client.query(`
+      SELECT
+        role.id,
+        role.title,
+        department.name AS department,
+        role.salary
+      FROM
+        role
+        JOIN department ON role.department_id = department.id;
+    `);
+    console.table(result.rows);
+    client.release();
+  }
 
   // Add a department
-  // addDepartment(department) {
-  // return this.query("INSERT INTO department SET ?", department);
+  async addDepartment(name) {
+    const client = await this.pool.connect();
+    await client.query(`INSERT INTO department (name) VALUES ($1);`, [name]);
+    client.release();
+  }
 
-  // }
   // Add a role
   // addRole(role) {
   //   return this.query("INSERT INTO role SET ?", role);
