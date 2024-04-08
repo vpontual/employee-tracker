@@ -83,6 +83,14 @@ class queries {
     ]);
     client.release();
   }
+  async updateEmployeeManager(employeeId, managerId) {
+    const client = await this.pool.connect();
+    await client.query("UPDATE employee SET manager_id = $1 WHERE id = $2", [
+      managerId,
+      employeeId,
+    ]);
+    client.release();
+  }
 }
 
 module.exports = new queries(pool);

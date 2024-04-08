@@ -131,11 +131,39 @@ const questions = [
       }));
     },
   },
-  // {
-  //   type: "input",
-  //   name: "updateemployeemanager",
-  //   when: (answers) => answers.welcome === "Update an employee's manager",
-  // },
+  // Update an employee's manager
+  {
+    type: "list",
+    name: "employeeChoice",
+    when: (answers) => answers.welcome === "Update an employee's manager",
+    message: "Select the employee whose manager you want to update:",
+    choices: async () => {
+      const employees = await queries.getAllEmployees();
+      return employees.map((employee) => ({
+        name: `${employee.first_name} ${employee.last_name} (${employee.title})`,
+        value: employee.id,
+      }));
+    },
+  },
+  {
+    type: "list",
+    name: "newManagerChoice",
+    when: (answers) => answers.welcome === "Update an employee's manager",
+    message: "Select the new manager for the employee:",
+    choices: async () => {
+      const employees = await queries.getAllEmployees();
+      const managersWithoutEmployee = employees.filter(
+        (employee) => employee.manager === null
+      );
+      return [
+        { name: "No Manager", value: null },
+        ...managersWithoutEmployee.map((employee) => ({
+          name: `${employee.first_name} ${employee.last_name} (${employee.title})`,
+          value: employee.id,
+        })),
+      ];
+    },
+  },
   // {
   //   type: "input",
   //   name: "deletedepartmentsrolesandemployees",
@@ -191,6 +219,10 @@ async function promptMenu() {
       } else {
         promptMenu();
       }
+      break;
+    case "Update an employee's manager":
+      const { employeeChoice, newManagerChoice } = answer;
+      await queries.updateEmployeeManager(employeeChoice, newManagerChoice);
       break;
   }
 
