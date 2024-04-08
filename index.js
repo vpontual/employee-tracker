@@ -32,9 +32,32 @@ const questions = [
   },
   {
     type: "input",
-    name: "addrole",
+    name: "newRoleTitle",
     when: (answers) => answers.welcome === "Add a role",
-    choices: ["Add a role"],
+    message: "What is the title of the new role?",
+  },
+  {
+    type: "input",
+    name: "newRoleSalary",
+    when: (answers) => answers.welcome === "Add a role",
+    message: "What is the salary for this role?",
+    validate: (value) => {
+      const valid = !isNaN(parseFloat(value));
+      return valid || "Please enter a number for the salary";
+    },
+  },
+  {
+    type: "list",
+    name: "departmentChoice",
+    when: (answers) => answers.welcome === "Add a role",
+    message: "Select the department for this role:",
+    choices: async (answers) => {
+      const departments = await queries.getAllDepartments();
+      return departments.map((department) => ({
+        name: department.name,
+        value: department.id,
+      }));
+    },
   },
   {
     type: "input",
@@ -86,6 +109,12 @@ async function promptMenu() {
       break;
     case "Add a department":
       await queries.addDepartment(answer.adddepartment);
+      break;
+    case "Add a role":
+      const { newRoleTitle, newRoleSalary } = answers;
+      // Prompt for the department ID or name, and get the department ID
+      const departmentId = await getDepartmentId(db);
+      await db.addRole(newRoleTitle, newRoleSalary, departmentId);
       break;
     case "Quit":
       process.exit(0);
