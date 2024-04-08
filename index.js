@@ -1,6 +1,7 @@
-const queries = require("./queries");
 // Including needed packages for this application
 const inquirer = require("inquirer");
+
+const queries = require("./queries");
 
 // Array of questions for user input
 const questions = [
@@ -25,6 +26,7 @@ const questions = [
       "Quit",
     ],
   },
+
   // Add a department
   {
     type: "input",
@@ -32,6 +34,7 @@ const questions = [
     when: (answers) => answers.welcome === "Add a department",
     message: "What is the name of the department?",
   },
+
   // Add a role
   {
     type: "input",
@@ -62,6 +65,7 @@ const questions = [
       }));
     },
   },
+
   // Add an employee
   {
     type: "input",
@@ -76,17 +80,10 @@ const questions = [
     message: "What is the employee's last name?",
   },
   {
-    type: "list",
-    name: "roleChoice",
+    type: "input", // Changed from "list"
+    name: "roleTitle", // Changed from "roleChoice"
     when: (answers) => answers.welcome === "Add an employee",
-    message: "Select the employee's role:",
-    choices: async () => {
-      const roles = await queries.getAllRoles();
-      return roles.map((role) => ({
-        name: `${role.title} (${role.department})`,
-        value: role.id,
-      }));
-    },
+    message: "Enter the title of the employee's role:",
   },
   {
     type: "list",
@@ -95,15 +92,22 @@ const questions = [
     message: "Select the employee's manager (leave blank for no manager):",
     choices: async () => {
       const employees = await queries.getAllEmployees();
+      if (employees.length === 0) {
+        return [{ name: "No employees available", value: null }];
+      }
+      const managersWithoutEmployee = employees.filter(
+        (employee) => employee.manager === null
+      );
       return [
         { name: "No Manager", value: null },
-        ...employees.map((employee) => ({
-          name: `${employee.first_name} ${employee.last_name}`,
+        ...managersWithoutEmployee.map((employee) => ({
+          name: `${employee.first_name} ${employee.last_name} (${employee.title})`,
           value: employee.id,
         })),
       ];
     },
   },
+
   // Update an employee's role
   {
     type: "list",
@@ -131,10 +135,11 @@ const questions = [
       }));
     },
   },
+
   // Update an employee's manager
   {
     type: "list",
-    name: "employeeChoice",
+    name: "managerEmployeeChoice",
     when: (answers) => answers.welcome === "Update an employee's manager",
     message: "Select the employee whose manager you want to update:",
     choices: async () => {
@@ -164,6 +169,7 @@ const questions = [
       ];
     },
   },
+
   // Delete departments, roles, and employees
   {
     type: "list",
@@ -225,6 +231,7 @@ const questions = [
       }));
     },
   },
+
   // View total utilized budget by department
   {
     type: "list",
@@ -240,6 +247,7 @@ const questions = [
       }));
     },
   },
+
   // Quit
   {
     type: "confirm",
@@ -271,8 +279,53 @@ async function promptMenu() {
       await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
       break;
     case "Add an employee":
-      const { firstName, lastName, roleChoice, managerChoice } = answer;
-      await queries.addEmployee(firstName, lastName, roleChoice, managerChoice);
+      const { firstName, lastName, roleTitle, managerChoice } = answer;
+      let newDepartmentChoice, roleChoice, roleSalary;
+      roleChoice = await queries.getRoleIdByTitle(roleTitle);
+      if (!roleChoice) {
+        const { departmentId, salary } = await inquirer.prompt([
+          {
+            type: "list",
+            name: "departmentId",
+            message: `No department found for role "${roleTitle}". Please select a department:`,
+            choices: async () => {
+              const departments = await queries.getAllDepartments();
+              return departments.map((department) => ({
+                name: department.name,
+                value: department.id,
+              }));
+            },
+          },
+          {
+            type: "input",
+            name: "salary",
+            message: "Please enter the salary for this role:",
+            validate: (value) => {
+              const valid = !isNaN(parseFloat(value));
+              return valid || "Please enter a number for the salary";
+            },
+          },
+        ]);
+        newDepartmentChoice = departmentId;
+        roleSalary = parseFloat(salary);
+        roleChoice = await queries.addRole(
+          roleTitle,
+          roleSalary,
+          newDepartmentChoice
+        );
+      } else {
+        newDepartmentChoice = await queries.getDepartmentIdByRoleTitle(
+          roleTitle
+        );
+        roleSalary = await queries.getSalaryByRoleTitle(roleTitle);
+      }
+      await queries.addEmployee(
+        firstName,
+        lastName,
+        roleChoice,
+        roleSalary,
+        managerChoice
+      );
       break;
     case "Update an employee's role":
       const { employeeChoice, newRoleChoice } = answer;
@@ -286,8 +339,11 @@ async function promptMenu() {
       }
       break;
     case "Update an employee's manager":
-      const { employeeChoice, newManagerChoice } = answer;
-      await queries.updateEmployeeManager(employeeChoice, newManagerChoice);
+      const { managerEmployeeChoice, newManagerChoice } = answer;
+      await queries.updateEmployeeManager(
+        managerEmployeeChoice,
+        newManagerChoice
+      );
       break;
     case "Delete departments, roles, and employees":
       const {
