@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 
 // Array of questions for user input
 const questions = [
+  // Welcome message
   {
     type: "list",
     name: "welcome",
@@ -24,12 +25,14 @@ const questions = [
       "Quit",
     ],
   },
+  // Add a department
   {
     type: "input",
     name: "adddepartment",
     when: (answers) => answers.welcome === "Add a department",
     message: "What is the name of the department?",
   },
+  // Add a role
   {
     type: "input",
     name: "newRoleTitle",
@@ -59,17 +62,75 @@ const questions = [
       }));
     },
   },
-  // {
-  //   type: "input",
-  //   name: "addemployee",
-  //   when: (answers) => answers.welcome === "Add an employee",
-  //   choices: ["Add an employee"],
-  // },
-  // {
-  //   type: "input",
-  //   name: "updateemployeerole",
-  //   when: (answers) => answers.welcome === "Update an employee's role",
-  // },
+  // Add an employee
+  {
+    type: "input",
+    name: "firstName",
+    when: (answers) => answers.welcome === "Add an employee",
+    message: "What is the employee's first name?",
+  },
+  {
+    type: "input",
+    name: "lastName",
+    when: (answers) => answers.welcome === "Add an employee",
+    message: "What is the employee's last name?",
+  },
+  {
+    type: "list",
+    name: "roleChoice",
+    when: (answers) => answers.welcome === "Add an employee",
+    message: "Select the employee's role:",
+    choices: async () => {
+      const roles = await queries.getAllRoles();
+      return roles.map((role) => ({
+        name: `${role.title} (${role.department})`,
+        value: role.id,
+      }));
+    },
+  },
+  {
+    type: "list",
+    name: "managerChoice",
+    when: (answers) => answers.welcome === "Add an employee",
+    message: "Select the employee's manager (leave blank for no manager):",
+    choices: async () => {
+      const employees = await queries.getAllEmployees();
+      return [
+        { name: "No Manager", value: null },
+        ...employees.map((employee) => ({
+          name: `${employee.first_name} ${employee.last_name}`,
+          value: employee.id,
+        })),
+      ];
+    },
+  },
+  // Update an employee's role
+  {
+    type: "list",
+    name: "employeeChoice",
+    when: (answers) => answers.welcome === "Update an employee's role",
+    message: "Select the employee whose role you want to update:",
+    choices: async () => {
+      const employees = await queries.getAllEmployees();
+      return employees.map((employee) => ({
+        name: `${employee.first_name} ${employee.last_name} (${employee.title})`,
+        value: employee.id,
+      }));
+    },
+  },
+  {
+    type: "list",
+    name: "newRoleChoice",
+    when: (answers) => answers.welcome === "Update an employee's role",
+    message: "Select the new role for the employee:",
+    choices: async () => {
+      const roles = await queries.getAllRoles();
+      return roles.map((role) => ({
+        name: `${role.title} (${role.department})`,
+        value: role.id,
+      }));
+    },
+  },
   // {
   //   type: "input",
   //   name: "updateemployeemanager",
@@ -115,6 +176,14 @@ async function promptMenu() {
     case "Add a role":
       const { newRoleTitle, newRoleSalary, departmentChoice } = answer;
       await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
+      break;
+    case "Add an employee":
+      const { firstName, lastName, roleChoice, managerChoice } = answer;
+      await queries.addEmployee(firstName, lastName, roleChoice, managerChoice);
+      break;
+    case "Update an employee's role":
+      const { employeeChoice, newRoleChoice } = answer;
+      await queries.updateEmployeeRole(employeeChoice, newRoleChoice);
       break;
     case "Quit":
       if (answer.confirmQuit) {

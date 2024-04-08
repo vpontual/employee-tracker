@@ -66,16 +66,23 @@ class queries {
     client.release();
   }
   // Add an employee
-  // addEmployee(employee) {
-  //   return this.connection.query("INSERT INTO employee SET ?", employee);
-  // }
-
+  async addEmployee(firstName, lastName, roleId, managerId) {
+    const client = await this.pool.connect();
+    await client.query(
+      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)",
+      [firstName, lastName, roleId, managerId || null]
+    );
+    client.release();
+  }
   // Update an employee's role
-  // updateEmployeeRole(employeeId, roleId) {
-  //   return this.query("UPDATE employee SET role_id = ? WHERE id = ?", [
-  //     roleId,
-  //     employeeId,
-  // ]);
+  async updateEmployeeRole(employeeId, roleId) {
+    const client = await this.pool.connect();
+    await client.query("UPDATE employee SET role_id = $1 WHERE id = $2", [
+      roleId,
+      employeeId,
+    ]);
+    client.release();
+  }
 }
 
 module.exports = new queries(pool);
