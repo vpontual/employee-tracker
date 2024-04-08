@@ -39,7 +39,7 @@ class queries {
       SELECT 
         * 
       FROM 
-        department`);
+        department;`);
   }
 
   // Get all roles
@@ -109,7 +109,7 @@ class queries {
   // Add a role
   async addRole(title, salary, department) {
     departmentId = await this.executeQuery(
-      "SELECT id FROM department WHERE name = $1;",
+      "SELECT id FROM department WHERE name = ($1);",
       [department]
     );
     return this.executeQuery(
@@ -118,70 +118,86 @@ class queries {
     );
   }
 
-  // TODO RP
-  // updateEmployeeManager
-  // updateEmployeeRole
-  // addEmployee
-  // addRole
-  // deleteRole
-  // deleteDepartment
-
   // Add an employee
-  // async addEmployee(firstName, lastName, roleId, roleSalary, managerId) {
-  //   const client = await this.pool.connect();
-  //   try {
-  //     await client.query(
-  //       "INSERT INTO employee (first_name, last_name, role_id, manager_id, salary) VALUES ($1, $2, $3, $4, $5)",
-  //       [firstName, lastName, roleId, managerId || null, roleSalary]
-  //     );
-  //   } catch (err) {
-  //     console.error("Error adding employee:", err);
-  //     throw err;
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
+  async addEmployee(firstName, lastName, role, manager) {
+    const roleId = await this.executeQuery(
+      `SELECT id FROM role WHERE title = ($1);`,
+      [role]
+    );
+    let managerId = null;
+    if (manager) {
+      const [managerFirstName, managerLastName] = manager.split(" ");
+      managerId = await this.executeQuery(
+        `SELECT id FROM manager WHERE first_name = ($1) AND last_name = ($2);`,
+        [managerFirstName, managerLastName]
+      );
+    }
+    return this.executeQuery(
+      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4);",
+      [firstName, lastName, roleId, managerId]
+    );
+  }
 
   // Update an employee's role
-  // async updateEmployeeRole(employeeId, roleId) {
-  //   const client = await this.pool.connect();
-  //   await client.query("UPDATE employee SET role_id = $1 WHERE id = $2", [
-  //     roleId,
-  //     employeeId,
-  //   ]);
-  //   client.release();
-  // }
+  async updateEmployeeRole(employee, title) {
+    const [firstName, lastName] = employee.split(" ");
+    const id = await this.executeQuery(
+      `SELECT id FROM employee WHERE first_name = $1 AND last_name = $2;`,
+      [firstName, lastName]
+    );
+    const roleId = await this.executeQuery(
+      `SELECT id FROM role WHERE title = $1;`,
+      [title]
+    );
+    return this.executeQuery(
+      `
+      UPDATE 
+        employee 
+      SET 
+        role_id = $1 
+      WHERE id = $2;`,
+      [roleId, id]
+    );
+  }
 
   // Update an employee's manager
-  // async updateEmployeeManager(employeeId, managerId) {
-  //   const client = await this.pool.connect();
-  //   await client.query("UPDATE employee SET manager_id = $1 WHERE id = $2", [
-  //     managerId,
-  //     employeeId,
-  //   ]);
-  //   client.release();
-  // }
-
+  async updateEmployeeManager(employee, manager) {
+    const [firstName, lastName] = employee.split(" ");
+    const [managerFirstName, managerLastName] = manager.split(" ");
+    const id = await this.executeQuery(
+      `SELECT id FROM employee WHERE first_name = $1 AND last_name = $2;`,
+      [firstName, lastName]
+    );
+    const managerId = await this.executeQuery(
+      `SELECT id FROM employee WHERE first_name = $1 AND last_name = $2;`,
+      [managerFirstName, managerLastName]
+    );
+    return this.executeQuery(
+      `
+      UPDATE 
+        employee 
+      SET 
+        manager_id = $1 
+      WHERE id = $2;`,
+      [managerId, id]
+    );
+  }
 
   // Delete a department
-  // async deleteDepartment(departmentId) {
-  //   const client = await this.pool.connect();
-  //   await client.query("DELETE FROM department WHERE id = $1", [departmentId]);
-  //   client.release();
+  async deleteDepartment(name) {
+    return this.executeQuery(`DELETE FROM department WHERE name = $1;`, [name]);
   }
 
   // Delete a role
-  // async deleteRole(roleId) {
-  //   const client = await this.pool.connect();
-  //   await client.query("DELETE FROM role WHERE id = $1", [roleId]);
-  //   client.release();
-  // }
+  async deleteRole(title) {
+    return this.executeQuery(`DELETE FROM role WHERE title = $1;`, [title]);
+  }
 
   // Delete an employee
   async deleteEmployee(employee) {
     const [firstName, lastName] = employee.split(" ");
     return this.executeQuery(
-      "DELETE FROM employee WHERE first_name = $1 AND last_name = $2",
+      `DELETE FROM employee WHERE first_name = $1 AND last_name = $2;`,
       [firstName, lastName]
     );
   }
@@ -202,7 +218,7 @@ class queries {
       WHERE 
         department.name = ($1)
       GROUP BY 
-        department.name`,
+        department.name;`,
       [name]
     );
   }
