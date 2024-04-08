@@ -59,40 +59,40 @@ const questions = [
       }));
     },
   },
-  {
-    type: "input",
-    name: "addemployee",
-    when: (answers) => answers.welcome === "Add an employee",
-    choices: ["Add an employee"],
-  },
-  {
-    type: "input",
-    name: "updateemployeerole",
-    when: (answers) => answers.welcome === "Update an employee's role",
-  },
-  {
-    type: "input",
-    name: "updateemployeemanager",
-    when: (answers) => answers.welcome === "Update an employee's manager",
-  },
-  {
-    type: "input",
-    name: "deletedepartmentsrolesandemployees",
-    when: (answers) =>
-      answers.welcome === "Delete departments, roles, and employees",
-  },
-  {
-    type: "input",
-    name: "viewtotalutilizedbudgetofdepartment",
-    when: (answers) =>
-      answers.welcome === "View the total utilized budget of a department",
-  },
-  {
-    type: "confirm",
-    name: "Are you sure you want to quit?",
-    default: false,
-    when: (answers) => answers.welcome === "Quit",
-  },
+  // {
+  //   type: "input",
+  //   name: "addemployee",
+  //   when: (answers) => answers.welcome === "Add an employee",
+  //   choices: ["Add an employee"],
+  // },
+  // {
+  //   type: "input",
+  //   name: "updateemployeerole",
+  //   when: (answers) => answers.welcome === "Update an employee's role",
+  // },
+  // {
+  //   type: "input",
+  //   name: "updateemployeemanager",
+  //   when: (answers) => answers.welcome === "Update an employee's manager",
+  // },
+  // {
+  //   type: "input",
+  //   name: "deletedepartmentsrolesandemployees",
+  //   when: (answers) =>
+  //     answers.welcome === "Delete departments, roles, and employees",
+  // },
+  // {
+  //   type: "input",
+  //   name: "viewtotalutilizedbudgetofdepartment",
+  //   when: (answers) =>
+  //     answers.welcome === "View the total utilized budget of a department",
+  // },
+  // {
+  //   type: "confirm",
+  //   name: "Are you sure you want to quit?",
+  //   default: false,
+  //   when: (answers) => answers.welcome === "Quit",
+  // },
 ];
 
 async function promptMenu() {
