@@ -36,7 +36,7 @@ class queries {
     const client = await this.pool.connect();
     try {
       const result = await client.query("SELECT * FROM department");
-      return result.rows;
+      console.table(result.rows);
     } catch (err) {
       console.error("Error getting departments:", err);
       throw err;

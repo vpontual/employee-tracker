@@ -59,7 +59,7 @@ const questions = [
     message: "Select the department for this role:",
     choices: async () => {
       const departments = await queries.getAllDepartments();
-      return departments.map((department) => ({
+      const departmentChoices = departments.rows.map((department) => ({
         name: department.name,
         value: department.id,
       }));
@@ -80,8 +80,8 @@ const questions = [
     message: "What is the employee's last name?",
   },
   {
-    type: "input", // Changed from "list"
-    name: "roleTitle", // Changed from "roleChoice"
+    type: "input",
+    name: "roleTitle",
     when: (answers) => answers.welcome === "Add an employee",
     message: "Enter the title of the employee's role:",
   },
