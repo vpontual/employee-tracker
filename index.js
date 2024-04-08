@@ -382,7 +382,9 @@ async function promptMenu() {
         await queries.deleteEmployee(employeeToDelete);
       }
       break;
+
     case "View the total utilized budget by department":
+      // Call the getTotalUtilizedBudgetByDepartment method from the queries object
       const budgets = await queries.getTotalUtilizedBudgetByDepartment();
       console.log("Total Utilized Budget by Department:");
       budgets.forEach((budget) => {
