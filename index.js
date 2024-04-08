@@ -258,27 +258,41 @@ const questions = [
   },
 ];
 
+// Function to prompt the user with the questions array
 async function promptMenu() {
   const answer = await inquirer.prompt(questions);
 
   switch (answer.welcome) {
+    // Switch statement to call the appropriate method from the queries object based on the user's choice
+
     case "View all departments":
+      // Call the getAllDepartments method from the queries object
       await queries.getAllDepartments();
       break;
+
     case "View all roles":
+      // Call the getAllRoles method from the queries object
       await queries.getAllRoles();
       break;
+
     case "View all employees":
+      // Call the getAllEmployees method from the queries object
       await queries.getAllEmployees();
       break;
+
     case "Add a department":
+      // Call the addDepartment method from the queries object
       await queries.addDepartment(answer.adddepartment);
       break;
+
     case "Add a role":
+      // Call the addRole method from the queries object
       const { newRoleTitle, newRoleSalary, departmentChoice } = answer;
       await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
       break;
+
     case "Add an employee":
+      // Call the addEmployee method from the queries object
       const { firstName, lastName, roleTitle, managerChoice } = answer;
       let newDepartmentChoice, roleChoice, roleSalary;
       roleChoice = await queries.getRoleIdByTitle(roleTitle);
@@ -327,10 +341,14 @@ async function promptMenu() {
         managerChoice
       );
       break;
+
     case "Update an employee's role":
+      // Call the updateEmployeeRole method from the queries object
       const { employeeChoice, newRoleChoice } = answer;
       await queries.updateEmployeeRole(employeeChoice, newRoleChoice);
       break;
+
+    // Quit the application
     case "Quit":
       if (answer.confirmQuit) {
         process.exit(0);
@@ -338,14 +356,18 @@ async function promptMenu() {
         promptMenu();
       }
       break;
+
     case "Update an employee's manager":
+      // Call the updateEmployeeManager method from the queries object
       const { managerEmployeeChoice, newManagerChoice } = answer;
       await queries.updateEmployeeManager(
         managerEmployeeChoice,
         newManagerChoice
       );
       break;
+
     case "Delete departments, roles, and employees":
+      // Call the deleteDepartment, deleteRole, or deleteEmployee method from the queries object
       const {
         deleteChoice,
         departmentToDelete,
