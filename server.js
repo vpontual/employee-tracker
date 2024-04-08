@@ -8,8 +8,8 @@ const pool = new Pool(
     password: "",
     host: "localhost",
     database: "employees_db",
-  },
-  console.log(`Connected to the employees_db database.`)
+  }
+  // console.log(`Connected to the employees_db database.`)
 );
 
 module.exports = pool;
