@@ -125,6 +125,25 @@ class queries {
     await client.query("DELETE FROM employee WHERE id = $1", [employeeId]);
     client.release();
   }
+  // View the total utilized budget of a department
+  async getTotalUtilizedBudgetByDepartment() {
+    const client = await this.pool.connect();
+    const result = await client.query(`
+      SELECT
+        d.name AS department,
+        SUM(r.salary) AS total_budget
+      FROM
+        employee e
+      JOIN
+        role r ON e.role_id = r.id
+      JOIN
+        department d ON r.department_id = d.id
+      GROUP BY
+        d.name;
+    `);
+    client.release();
+    return result.rows;
+  }
 }
 
 module.exports = new queries(pool);

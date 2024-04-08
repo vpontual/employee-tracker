@@ -225,12 +225,22 @@ const questions = [
       }));
     },
   },
-  // {
-  //   type: "input",
-  //   name: "viewtotalutilizedbudgetofdepartment",
-  //   when: (answers) =>
-  //     answers.welcome === "View the total utilized budget of a department",
-  // },
+  // View total utilized budget by department
+  {
+    type: "list",
+    name: "departmentChoice",
+    when: (answers) =>
+      answers.welcome === "View the total utilized budget by department",
+    message: "Select the department to view the total utilized budget:",
+    choices: async () => {
+      const departments = await Queries.getAllDepartments();
+      return departments.map((department) => ({
+        name: department.name,
+        value: department.name,
+      }));
+    },
+  },
+  // Quit
   {
     type: "confirm",
     name: "confirmQuit",
@@ -293,6 +303,13 @@ async function promptMenu() {
       } else if (deleteChoice === "Employee") {
         await queries.deleteEmployee(employeeToDelete);
       }
+      break;
+    case "View the total utilized budget by department":
+      const budgets = await queries.getTotalUtilizedBudgetByDepartment();
+      console.log("Total Utilized Budget by Department:");
+      budgets.forEach((budget) => {
+        console.log(`${budget.department}: $${budget.total_budget}`);
+      });
       break;
   }
 
