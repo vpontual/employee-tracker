@@ -51,7 +51,7 @@ const questions = [
     name: "departmentChoice",
     when: (answers) => answers.welcome === "Add a role",
     message: "Select the department for this role:",
-    choices: async (answers) => {
+    choices: async () => {
       const departments = await queries.getAllDepartments();
       return departments.map((department) => ({
         name: department.name,
@@ -87,16 +87,18 @@ const questions = [
   //   when: (answers) =>
   //     answers.welcome === "View the total utilized budget of a department",
   // },
-  // {
-  //   type: "confirm",
-  //   name: "Are you sure you want to quit?",
-  //   default: false,
-  //   when: (answers) => answers.welcome === "Quit",
-  // },
+  {
+    type: "confirm",
+    name: "confirmQuit",
+    when: (answers) => answers.welcome === "Quit",
+    message: "Are you sure you want to quit?",
+    default: false,
+  },
 ];
 
 async function promptMenu() {
   const answer = await inquirer.prompt(questions);
+
   switch (answer.welcome) {
     case "View all departments":
       await queries.getAllDepartments();
@@ -111,13 +113,16 @@ async function promptMenu() {
       await queries.addDepartment(answer.adddepartment);
       break;
     case "Add a role":
-      const { newRoleTitle, newRoleSalary } = answers;
-      // Prompt for the department ID or name, and get the department ID
-      const departmentId = await getDepartmentId(db);
-      await db.addRole(newRoleTitle, newRoleSalary, departmentId);
+      const { newRoleTitle, newRoleSalary, departmentChoice } = answer;
+      await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
       break;
     case "Quit":
-      process.exit(0);
+      if (answer.confirmQuit) {
+        process.exit(0);
+      } else {
+        promptMenu();
+      }
+      break;
   }
 
   promptMenu();

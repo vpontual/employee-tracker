@@ -30,6 +30,7 @@ class queries {
     const client = await this.pool.connect();
     const result = await client.query("SELECT id, name FROM department");
     console.table(result.rows);
+    return result.rows;
     client.release();
   }
 
