@@ -164,12 +164,67 @@ const questions = [
       ];
     },
   },
-  // {
-  //   type: "input",
-  //   name: "deletedepartmentsrolesandemployees",
-  //   when: (answers) =>
-  //     answers.welcome === "Delete departments, roles, and employees",
-  // },
+  // Delete departments, roles, and employees
+  {
+    type: "list",
+    name: "deleteChoice",
+    when: (answers) =>
+      answers.welcome === "Delete departments, roles, and employees",
+    message: "What would you like to delete?",
+    choices: ["Department", "Role", "Employee"],
+  },
+  {
+    type: "list",
+    name: "departmentToDelete",
+    when: (answers) => answers.deleteChoice === "Department",
+    message: "Select the department to delete:",
+    choices: async () => {
+      const departments = await queries.getAllDepartments();
+      const employees = await queries.getAllEmployeesWithRolesAndDepartments();
+      return departments
+        .filter(
+          (department) =>
+            !employees.some(
+              (employee) => employee.department === department.name
+            )
+        )
+        .map((department) => ({
+          name: department.name,
+          value: department.id,
+        }));
+    },
+  },
+  {
+    type: "list",
+    name: "roleToDelete",
+    when: (answers) => answers.deleteChoice === "Role",
+    message: "Select the role to delete:",
+    choices: async () => {
+      const roles = await queries.getAllRoles();
+      const employees = await queries.getAllEmployeesWithRolesAndDepartments();
+      return roles
+        .filter(
+          (role) => !employees.some((employee) => employee.title === role.title)
+        )
+        .map((role) => ({
+          name: `${role.title} (${role.department})`,
+          value: role.id,
+        }));
+    },
+  },
+  {
+    type: "list",
+    name: "employeeToDelete",
+    when: (answers) => answers.deleteChoice === "Employee",
+    message: "Select the employee to delete:",
+    choices: async () => {
+      const employees = await queries.getAllEmployees();
+      return employees.map((employee) => ({
+        name: `${employee.first_name} ${employee.last_name} (${employee.title})`,
+        value: employee.id,
+      }));
+    },
+  },
   // {
   //   type: "input",
   //   name: "viewtotalutilizedbudgetofdepartment",
@@ -223,6 +278,21 @@ async function promptMenu() {
     case "Update an employee's manager":
       const { employeeChoice, newManagerChoice } = answer;
       await queries.updateEmployeeManager(employeeChoice, newManagerChoice);
+      break;
+    case "Delete departments, roles, and employees":
+      const {
+        deleteChoice,
+        departmentToDelete,
+        roleToDelete,
+        employeeToDelete,
+      } = answer;
+      if (deleteChoice === "Department") {
+        await queries.deleteDepartment(departmentToDelete);
+      } else if (deleteChoice === "Role") {
+        await queries.deleteRole(roleToDelete);
+      } else if (deleteChoice === "Employee") {
+        await queries.deleteEmployee(employeeToDelete);
+      }
       break;
   }
 

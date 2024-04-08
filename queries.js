@@ -91,6 +91,40 @@ class queries {
     ]);
     client.release();
   }
+  // Delete a department, employee, or role
+  async getAllEmployeesWithRolesAndDepartments() {
+    const client = await this.pool.connect();
+    const result = await client.query(`
+      SELECT
+        e.id, e.first_name, e.last_name, r.title, d.name AS department
+      FROM
+        employee e
+      JOIN
+        role r ON e.role_id = r.id
+      JOIN
+        department d ON r.department_id = d.id;
+    `);
+    client.release();
+    return result.rows;
+  }
+  // Delete a department
+  async deleteDepartment(departmentId) {
+    const client = await this.pool.connect();
+    await client.query("DELETE FROM department WHERE id = $1", [departmentId]);
+    client.release();
+  }
+  // Delete a role
+  async deleteRole(roleId) {
+    const client = await this.pool.connect();
+    await client.query("DELETE FROM role WHERE id = $1", [roleId]);
+    client.release();
+  }
+  // Delete an employee
+  async deleteEmployee(employeeId) {
+    const client = await this.pool.connect();
+    await client.query("DELETE FROM employee WHERE id = $1", [employeeId]);
+    client.release();
+  }
 }
 
 module.exports = new queries(pool);
