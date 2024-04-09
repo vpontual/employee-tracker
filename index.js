@@ -1,7 +1,12 @@
 // Including needed packages for this application
 const inquirer = require("inquirer");
-
+const image = require;
+("./assets/image.js");
 const queries = require("./queries");
+
+function displayImage() {
+  console.log(image);
+}
 
 // Array of questions for user input
 const questions = [
@@ -267,133 +272,141 @@ async function promptMenu() {
 
     case "View all departments":
       // Call the getAllDepartments method from the queries object
-      await queries.getAllDepartments();
+      const allDepartments = await queries.getAllDepartments();
+      console.table(allDepartments);
       break;
 
     case "View all roles":
       // Call the getAllRoles method from the queries object
-      await queries.getAllRoles();
+      const allRoles = await queries.getAllRoles();
+      console.table(allRoles);
       break;
 
     case "View all employees":
       // Call the getAllEmployees method from the queries object
-      await queries.getAllEmployees();
+      const allEmployees = await queries.getAllEmployees();
+      console.table(allEmployees);
       break;
 
-    case "Add a department":
-      // Call the addDepartment method from the queries object
-      await queries.addDepartment(answer.adddepartment);
-      break;
+    // case "Add a department":
+    // Call the addDepartment method from the queries object
+    //   await queries.addDepartment(answer.adddepartment);
+    //   break;
 
-    case "Add a role":
-      // Call the addRole method from the queries object
-      const { newRoleTitle, newRoleSalary, departmentChoice } = answer;
-      await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
-      break;
+    // case "Add a role":
+    // Call the addRole method from the queries object
+    //   const { newRoleTitle, newRoleSalary, departmentChoice } = answer;
+    //   await queries.addRole(newRoleTitle, newRoleSalary, departmentChoice);
+    //   break;
 
-    case "Add an employee":
-      // Call the addEmployee method from the queries object
-      const { firstName, lastName, roleTitle, managerChoice } = answer;
-      let newDepartmentChoice, roleChoice, roleSalary;
-      roleChoice = await queries.getRoleIdByTitle(roleTitle);
-      if (!roleChoice) {
-        const { departmentId, salary } = await inquirer.prompt([
-          {
-            type: "list",
-            name: "departmentId",
-            message: `No department found for role "${roleTitle}". Please select a department:`,
-            choices: async () => {
-              const departments = await queries.getAllDepartments();
-              return departments.map((department) => ({
-                name: department.name,
-                value: department.id,
-              }));
-            },
-          },
-          {
-            type: "input",
-            name: "salary",
-            message: "Please enter the salary for this role:",
-            validate: (value) => {
-              const valid = !isNaN(parseFloat(value));
-              return valid || "Please enter a number for the salary";
-            },
-          },
-        ]);
-        newDepartmentChoice = departmentId;
-        roleSalary = parseFloat(salary);
-        roleChoice = await queries.addRole(
-          roleTitle,
-          roleSalary,
-          newDepartmentChoice
-        );
-      } else {
-        newDepartmentChoice = await queries.getDepartmentIdByRoleTitle(
-          roleTitle
-        );
-        roleSalary = await queries.getSalaryByRoleTitle(roleTitle);
-      }
-      await queries.addEmployee(
-        firstName,
-        lastName,
-        roleChoice,
-        roleSalary,
-        managerChoice
-      );
-      break;
+    // case "Add an employee":
+    //   // Call the addEmployee method from the queries object
+    //   const { firstName, lastName, roleTitle, managerChoice } = answer;
+    //   let newDepartmentChoice, roleChoice, roleSalary;
+    //   roleChoice = await queries.getRoleIdByTitle(roleTitle);
+    //   if (!roleChoice) {
+    //     const { departmentId, salary } = await inquirer.prompt([
+    //       {
+    //         type: "list",
+    //         name: "departmentId",
+    //         message: `No department found for role "${roleTitle}". Please select a department:`,
+    //         choices: async () => {
+    //           const departments = await queries.getAllDepartments();
+    //           return departments.map((department) => ({
+    //             name: department.name,
+    //             value: department.id,
+    //           }));
+    //         },
+    //       },
+    //       {
+    //         type: "input",
+    //         name: "salary",
+    //         message: "Please enter the salary for this role:",
+    //         validate: (value) => {
+    //           const valid = !isNaN(parseFloat(value));
+    //           return valid || "Please enter a number for the salary";
+    //         },
+    //       },
+    //     ]);
+    //     newDepartmentChoice = departmentId;
+    //     roleSalary = parseFloat(salary);
+    //     roleChoice = await queries.addRole(
+    //       roleTitle,
+    //       roleSalary,
+    //       newDepartmentChoice
+    //     );
+    //   } else {
+    //     newDepartmentChoice = await queries.getDepartmentIdByRoleTitle(
+    //       roleTitle
+    //     );
+    //     roleSalary = await queries.getSalaryByRoleTitle(roleTitle);
+    //   }
+    //   await queries.addEmployee(
+    //     firstName,
+    //     lastName,
+    //     roleChoice,
+    //     roleSalary,
+    //     managerChoice
+    //   );
+    //   break;
 
-    case "Update an employee's role":
-      // Call the updateEmployeeRole method from the queries object
-      const { employeeChoice, newRoleChoice } = answer;
-      await queries.updateEmployeeRole(employeeChoice, newRoleChoice);
-      break;
+    // case "Update an employee's role":
+    //   // Call the updateEmployeeRole method from the queries object
+    //   const { employeeChoice, newRoleChoice } = answer;
+    //   await queries.updateEmployeeRole(employeeChoice, newRoleChoice);
+    //   break;
 
     // Quit the application
-    case "Quit":
-      if (answer.confirmQuit) {
-        process.exit(0);
-      } else {
-        promptMenu();
-      }
-      break;
+    // case "Quit":
+    //   if (answer.confirmQuit) {
+    //     process.exit(0);
+    //   } else {
+    //     promptMenu();
+    //   }
+    //   break;
 
-    case "Update an employee's manager":
-      // Call the updateEmployeeManager method from the queries object
-      const { managerEmployeeChoice, newManagerChoice } = answer;
-      await queries.updateEmployeeManager(
-        managerEmployeeChoice,
-        newManagerChoice
-      );
-      break;
+    // case "Update an employee's manager":
+    //   // Call the updateEmployeeManager method from the queries object
+    //   const { managerEmployeeChoice, newManagerChoice } = answer;
+    //   await queries.updateEmployeeManager(
+    //     managerEmployeeChoice,
+    //     newManagerChoice
+    //   );
+    //   break;
 
-    case "Delete departments, roles, and employees":
-      // Call the deleteDepartment, deleteRole, or deleteEmployee method from the queries object
-      const {
-        deleteChoice,
-        departmentToDelete,
-        roleToDelete,
-        employeeToDelete,
-      } = answer;
-      if (deleteChoice === "Department") {
-        await queries.deleteDepartment(departmentToDelete);
-      } else if (deleteChoice === "Role") {
-        await queries.deleteRole(roleToDelete);
-      } else if (deleteChoice === "Employee") {
-        await queries.deleteEmployee(employeeToDelete);
-      }
-      break;
+    // case "Delete departments, roles, and employees":
+    //   // Call the deleteDepartment, deleteRole, or deleteEmployee method from the queries object
+    //   const {
+    //     deleteChoice,
+    //     departmentToDelete,
+    //     roleToDelete,
+    //     employeeToDelete,
+    //   } = answer;
+    //   if (deleteChoice === "Department") {
+    //     await queries.deleteDepartment(departmentToDelete);
+    //   } else if (deleteChoice === "Role") {
+    //     await queries.deleteRole(roleToDelete);
+    //   } else if (deleteChoice === "Employee") {
+    //     await queries.deleteEmployee(employeeToDelete);
+    //   }
+    //   break;
 
-    case "View the total utilized budget by department":
-      // Call the getTotalUtilizedBudgetByDepartment method from the queries object
-      const budgets = await queries.getTotalUtilizedBudgetByDepartment();
-      console.log("Total Utilized Budget by Department:");
-      budgets.forEach((budget) => {
-        console.log(`${budget.department}: $${budget.total_budget}`);
-      });
-      break;
+    // case "View the total utilized budget by department":
+    //   // Call the getTotalUtilizedBudgetByDepartment method from the queries object
+    //   const budgets = await queries.getTotalUtilizedBudgetByDepartment();
+    //   console.log("Total Utilized Budget by Department:");
+    //   budgets.forEach((budget) => {
+    //     console.log(`${budget.department}: $${budget.total_budget}`);
+    //   });
+    //   break;
   }
 
   promptMenu();
 }
 
-promptMenu();
+function init() {
+  displayImage();
+  promptMenu();
+}
+
+init();

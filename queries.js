@@ -16,7 +16,7 @@ class queries {
   }
 
   // Get all employees
-  async getAllEmployees() {
+  static async getAllEmployees() {
     return this.executeQuery(`
       SELECT
         employee.id,
@@ -34,7 +34,7 @@ class queries {
   }
 
   // Get all departments
-  async getAllDepartments() {
+  static async getAllDepartments() {
     return this.executeQuery(`
       SELECT 
         * 
@@ -43,7 +43,7 @@ class queries {
   }
 
   // Get all roles
-  async getAllRoles() {
+  static async getAllRoles() {
     return this.executeQuery(`
       SELECT
         role.id,
@@ -57,7 +57,7 @@ class queries {
   }
 
   // Get all employees by manager
-  async getEmployeesByManager() {
+  static async getEmployeesByManager() {
     return this.executeQuery(`
         SELECT
           employee.id,
@@ -76,7 +76,7 @@ class queries {
   }
 
   // Get all employees by department
-  async getEmployeesByDepartment() {
+  static async getEmployeesByDepartment() {
     return this.executeQuery(`
         SELECT
           employee.id,
@@ -95,7 +95,7 @@ class queries {
   }
 
   // Add a department
-  async addDepartment(name) {
+  static async addDepartment(name) {
     return this.executeQuery(
       `
     INSERT INTO
@@ -107,7 +107,7 @@ class queries {
   }
 
   // Add a role
-  async addRole(title, salary, department) {
+  static async addRole(title, salary, department) {
     departmentId = await this.executeQuery(
       "SELECT id FROM department WHERE name = ($1);",
       [department]
@@ -119,7 +119,7 @@ class queries {
   }
 
   // Add an employee
-  async addEmployee(firstName, lastName, role, manager) {
+  static async addEmployee(firstName, lastName, role, manager) {
     const roleId = await this.executeQuery(
       `SELECT id FROM role WHERE title = ($1);`,
       [role]
@@ -139,7 +139,7 @@ class queries {
   }
 
   // Update an employee's role
-  async updateEmployeeRole(employee, title) {
+  static async updateEmployeeRole(employee, title) {
     const [firstName, lastName] = employee.split(" ");
     const id = await this.executeQuery(
       `SELECT id FROM employee WHERE first_name = $1 AND last_name = $2;`,
@@ -161,7 +161,7 @@ class queries {
   }
 
   // Update an employee's manager
-  async updateEmployeeManager(employee, manager) {
+  static async updateEmployeeManager(employee, manager) {
     const [firstName, lastName] = employee.split(" ");
     const [managerFirstName, managerLastName] = manager.split(" ");
     const id = await this.executeQuery(
@@ -184,17 +184,17 @@ class queries {
   }
 
   // Delete a department
-  async deleteDepartment(name) {
+  static async deleteDepartment(name) {
     return this.executeQuery(`DELETE FROM department WHERE name = $1;`, [name]);
   }
 
   // Delete a role
-  async deleteRole(title) {
+  static async deleteRole(title) {
     return this.executeQuery(`DELETE FROM role WHERE title = $1;`, [title]);
   }
 
   // Delete an employee
-  async deleteEmployee(employee) {
+  static async deleteEmployee(employee) {
     const [firstName, lastName] = employee.split(" ");
     return this.executeQuery(
       `DELETE FROM employee WHERE first_name = $1 AND last_name = $2;`,
@@ -203,7 +203,7 @@ class queries {
   }
 
   // View the total utilized budget of a department
-  async getDepartmentBudget(name) {
+  static async getDepartmentBudget(name) {
     return this.executeQuery(
       `
       SELECT
@@ -224,4 +224,4 @@ class queries {
   }
 }
 
-module.exports = new queries();
+module.exports = queries;
