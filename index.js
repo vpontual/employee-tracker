@@ -41,7 +41,7 @@ async function promptMenu() {
         "Add a department",
         "Add a role",
         "Add an employee",
-        " Update an employee's role",
+        "Update an employee's role",
         "Update an employee's manager",
         "Delete a department",
         "Delete a role",
@@ -62,7 +62,7 @@ async function promptMenu() {
 
     // Add Department
     {
-      when: (answers) => answers.job === "Add Department",
+      when: (answers) => answers.welcome === "Add a department",
       type: "input",
       name: "departmentName",
       message: "What is the name of the department?",
@@ -70,19 +70,19 @@ async function promptMenu() {
 
     // Add Role
     {
-      when: (answers) => answers.job === "Add Role",
+      when: (answers) => answers.welcome === "Add a role",
       type: "input",
       name: "roleTitle",
       message: "What is the role title?",
     },
     {
-      when: (answers) => answers.job === "Add Role",
+      when: (answers) => answers.welcome === "Add a role",
       type: "input",
       name: "roleSalary",
       message: "What is the role salary?",
     },
     {
-      when: (answers) => answers.job === "Add Role",
+      when: (answers) => answers.welcome === "Add a role",
       type: "list",
       name: "roleDepartment",
       message: "Select the department that this role belongs to",
@@ -91,28 +91,26 @@ async function promptMenu() {
 
     // Add Employee
     {
-      when: (answers) => answers.job === "Add Employee",
+      when: (answers) => answers.welcome === "Add an employee",
       type: "input",
       name: "employeeFirstName",
       message: "What is the first name of the employee?",
-      validate: (input) => validate(input, 1, 10, "String"),
     },
     {
-      when: (answers) => answers.job === "Add Employee",
+      when: (answers) => answers.welcome === "Add an employee",
       type: "input",
       name: "employeeLastName",
       message: "What is the last name of the employee?",
-      validate: (input) => validate(input, 1, 9, "String"),
     },
     {
-      when: (answers) => answers.job === "Add Employee",
+      when: (answers) => answers.welcome === "Add an employee",
       type: "list",
       name: "employeeTitle",
       message: "Select the role of this employee",
       choices: menuChoices.roleList,
     },
     {
-      when: (answers) => answers.job === "Add Employee",
+      when: (answers) => answers.welcome === "Add an employee",
       type: "list",
       name: "employeeManager",
       message: "Select the manager of this employee",
@@ -121,14 +119,14 @@ async function promptMenu() {
 
     // Update an employee's role
     {
-      when: (answers) => answers.job === "Update Employee Role",
+      when: (answers) => answers.welcome === "Update an employee's role",
       type: "list",
       name: "employee",
       message: "Select the employee to update the role",
       choices: menuChoices.employeeList,
     },
     {
-      when: (answers) => answers.job === "Update Employee Role",
+      when: (answers) => answers.welcome === "Update an employee's role",
       type: "list",
       name: "title",
       message: "Select the new role",
@@ -137,14 +135,14 @@ async function promptMenu() {
 
     // Update an employee's manager
     {
-      when: (answers) => answers.job === "Update Employee Manager",
+      when: (answers) => answers.welcome === "Update an employee's manager",
       type: "list",
       name: "employee",
       message: "Select the employee to update the manager",
       choices: menuChoices.employeeList,
     },
     {
-      when: (answers) => answers.job === "Update Employee Manager",
+      when: (answers) => answers.welcome === "Update an employee's manager",
       type: "list",
       name: "manager",
       message: "Select the new manager",
@@ -153,7 +151,7 @@ async function promptMenu() {
 
     // Delete a department
     {
-      when: (answers) => answers.job === "Delete Department",
+      when: (answers) => answers.welcome === "Delete a department",
       type: "list",
       name: "departmentName",
       message: "Select the department to be deleted",
@@ -162,7 +160,7 @@ async function promptMenu() {
 
     // Delete Role
     {
-      when: (answers) => answers.job === "Delete Role",
+      when: (answers) => answers.welcome === "Delete a role",
       type: "list",
       name: "roleTitle",
       message: "Select the role to be deleted",
@@ -171,7 +169,7 @@ async function promptMenu() {
 
     // Delete Employee
     {
-      when: (answers) => answers.job === "Delete Employee",
+      when: (answers) => answers.welcome === "Delete an employee",
       type: "list",
       name: "employee",
       message: "Select the employee to be deleted",
@@ -232,10 +230,12 @@ async function promptMenu() {
         `The ${answer.departmentName} department budget is $${budgetForDepartment[0].budget}.\n`
       );
       break;
+
     case "Add a department":
       await queries.addDepartment(answer.departmentName);
       console.log(`${answer.departmentName} added successfully.\n`);
       break;
+
     case "Add a role":
       await queries.addRole(
         answer.roleTitle,
@@ -244,6 +244,7 @@ async function promptMenu() {
       );
       console.log(`${answer.roleTitle} added successfully.\n`);
       break;
+
     case "Add an employee":
       await queries.addEmployee(
         answer.employeeFirstName,
@@ -255,29 +256,38 @@ async function promptMenu() {
         `${answer.employeeFirstName} ${answer.employeeLastName} added successfully.\n`
       );
       break;
+
     case "Update an employee's role":
       await queries.updateEmployeeRole(answer.employee, answer.title);
       console.log(`${answer.employee}'s role updated successfully.\n`);
       break;
+
     case "Update an employee's manager":
       await queries.updateEmployeeManager(answer.employee, answer.manager);
       console.log(`${answer.employee}'s manager updated successfully.\n`);
       break;
+
     case "Delete a department":
-      await queries.deleteDepartment(answer.department);
-      console.log(`${answer.department} deleted successfully.\n`);
+      await queries.deleteDepartment(answer.departmentName);
+      console.log(`${answer.departmentName} deleted successfully.\n`);
       break;
+
     case "Delete a role":
-      await queries.deleteRole(answer.role);
-      console.log(`${answer.role} deleted successfully.\n`);
+      await queries.deleteRole(answer.roleTitle);
+      console.log(`${answer.roleTitle} deleted successfully.\n`);
       break;
+
     case "Delete an employee":
       await queries.deleteEmployee(answer.employee);
       console.log(`${answer.employee} deleted successfully.\n`);
       break;
+
     case "Quit":
-      console.log("Goodbye!");
-      process.exit(0);
+      if (answer.confirmQuit) {
+        console.log("Goodbye!");
+        process.exit(0);
+      }
+      break;
   }
   promptMenu();
 }
