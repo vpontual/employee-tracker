@@ -60,12 +60,7 @@ class queries {
   static async getEmployeesByManager() {
     return this.executeQuery(`
         SELECT
-          employee.id,
-          employee.first_name,
-          employee.last_name,
-          role.title,
-          role.salary AS salary,
-          department.name AS department,
+          CONCAT(employee.first_name, ' ', employee.last_name) AS employee,
           CONCAT(manager.first_name, ' ', manager.last_name) AS manager
         FROM
           employee
@@ -78,22 +73,17 @@ class queries {
   // Get all employees by department
   static async getEmployeesByDepartment() {
     return this.executeQuery(`
-        SELECT
-          employee.id,
-          employee.first_name,
-          employee.last_name,
-          role.title,
-          role.salary AS salary,
-          department.name AS department,
-          CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-        FROM
-          employee
-          JOIN role ON employee.role_id = role.id
-          JOIN department ON role.department_id = department.id
-          LEFT JOIN employee as manager ON employee.manager_id = manager.id
-        ORDER BY department;`);
+      SELECT
+        department.name AS department,
+        CONCAT(employee.first_name, ' ', employee.last_name) AS employee
+      FROM
+        employee
+        JOIN role ON employee.role_id = role.id
+        JOIN department ON role.department_id = department.id
+        LEFT JOIN employee as manager ON employee.manager_id = manager.id
+      ORDER BY department;
+    `);
   }
-
   // Add a department
   static async addDepartment(name) {
     return this.executeQuery(
