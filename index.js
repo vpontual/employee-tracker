@@ -19,16 +19,16 @@ const questions = [
       "View all departments",
       "View all roles",
       "View all employees",
-      "Add a department",
-      "Add a role",
-      "Add an employee",
-      "Update an employee's role",
-      "Update an employee's manager",
-      "View employees by manager",
-      "View employees by department",
-      "Delete departments, roles, and employees",
-      "View the total utilized budget of a department",
-      "Quit",
+      " Add a department",
+      " Add a role",
+      " Add an employee",
+      " Update an employee's role",
+      " Update an employee's manager",
+      " View employees by manager",
+      " View employees by department",
+      " Delete departments, roles, and employees",
+      " View the total utilized budget of a department",
+      " Quit",
     ],
   },
 
@@ -286,6 +286,18 @@ async function promptMenu() {
       // Call the getAllEmployees method from the queries object
       const allEmployees = await queries.getAllEmployees();
       console.table(allEmployees);
+      break;
+
+    case "View all employees by manager":
+      // Call the getAllEmployees method from the queries object
+      const allEmployeesByManager = await queries.getEmployeesByManager();
+      console.table(allEmployeesByManager);
+      break;
+
+    case "View all employees by department":
+      // Call the getAllEmployees method from the queries object
+      const allEmployeesByDepartment = await queries.getEmployeesByDepartment();
+      console.table(allEmployeesByDepartment);
       break;
 
     // case "Add a department":
